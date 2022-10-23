@@ -22,6 +22,12 @@ public class Spawner : MonoBehaviour
     public float interval = 5;
     float timer;
 
+    private List<GameObject> runtimeCreatedObjects;
+
+    private void Awake() {
+    runtimeCreatedObjects = new List<GameObject>();
+}
+
     private void Start()
     {
         timeToSpawn.onValueChanged.AddListener(delegate { GetDelay(); });
@@ -31,7 +37,11 @@ public class Spawner : MonoBehaviour
     void Update()
     {
         SpawnCube(cube);
-        //GiveVelocity(cube);
+        GameObject[] ttt = GameObject.FindGameObjectsWithTag("Cube");
+        foreach (GameObject items in runtimeCreatedObjects)
+        {
+            GiveVelocity(items);
+        }
     }
 
     public float GetDelay()
@@ -66,7 +76,7 @@ public class Spawner : MonoBehaviour
 
     public Vector3 GiveDistance()
     {
-        Vector3 distance = new Vector3(0, 0, GetDistance());
+        Vector3 distance = new Vector3(0, 0.7f, GetDistance());
         return distance;
     }
 
@@ -78,6 +88,7 @@ public class Spawner : MonoBehaviour
             if (spawnControl.isOn)
             {
                 gameObject = Instantiate(cube, transform.position, transform.rotation);
+                runtimeCreatedObjects.Add(gameObject);
                 count++;
                 countOfCubes.text = count.ToString();
             }
