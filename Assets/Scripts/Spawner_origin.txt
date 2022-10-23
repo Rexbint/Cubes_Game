@@ -1,0 +1,58 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class Spawner : MonoBehaviour
+{  
+        [SerializeField] GameObject cube;
+        [SerializeField] bool spawn = true;
+        
+        [SerializeField] TMP_InputField timeToSpawn;
+        [SerializeField] TMP_InputField speedForCubes;
+        [SerializeField] TMP_InputField distanceForCubes;
+        Scrollbar speedBar;
+
+    // Start is called before the first frame update
+    void Start()
+    {   
+        timeToSpawn = FindObjectOfType<TMP_InputField>();
+        timeToSpawn.text = "5";
+        distanceForCubes = FindObjectOfType<TMP_InputField>();
+        distanceForCubes.text = "5";
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float.TryParse(timeToSpawn.text, out float result);
+        Invoke("SpawnTest", result);
+        speedForCubes.text = (MathF.Round(FindObjectOfType<Scrollbar>().value*10)).ToString();
+        float.TryParse(speedForCubes.text, out float result1);
+        GiveCubesSpeed(MathF.Round(result1));
+    }
+
+    void SpawnTest()
+    {
+        Vector3 newPos = new Vector3(UnityEngine.Random.Range(1,10),UnityEngine.Random.Range(1,10),1);
+        Instantiate(cube, newPos, Quaternion.identity);
+    }
+
+   /*  IEnumerator SpawningCubes()
+    {
+         while (spawn)
+        {
+            int.TryParse(timeToSpawn.text, out int result);
+            yield return new WaitForSeconds(result);
+            Vector3 newPos = new Vector3(UnityEngine.Random.Range(1,10),UnityEngine.Random.Range(1,10),1);
+            Instantiate(cube, newPos, Quaternion.identity);
+        }
+    } */
+
+    public void GiveCubesSpeed(float speed)
+    {
+        GameObject.FindGameObjectWithTag("Cube").GetComponent<Rigidbody>().velocity = new Vector3 (speed*1000,0,0);
+    }
+}
