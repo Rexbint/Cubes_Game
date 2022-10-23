@@ -13,20 +13,16 @@ public class Spawner : MonoBehaviour
     [SerializeField] TMP_InputField distanceForCubes;
     [SerializeField] TMP_InputField countOfCubes;
     [SerializeField] Toggle spawnControl;
-    [SerializeField] Scrollbar delayBar;
-    [SerializeField] Scrollbar speedBar;
-    [SerializeField] Scrollbar distanceBar;
 
-    bool spawn = true;
     int count = 0;
-    public float interval = 5;
     float timer;
 
     private List<GameObject> runtimeCreatedObjects;
 
-    private void Awake() {
-    runtimeCreatedObjects = new List<GameObject>();
-}
+    private void Awake()
+    {
+        runtimeCreatedObjects = new List<GameObject>();
+    }
 
     private void Start()
     {
@@ -38,30 +34,50 @@ public class Spawner : MonoBehaviour
     {
         SpawnCube(cube);
         GameObject[] ttt = GameObject.FindGameObjectsWithTag("Cube");
-        foreach (GameObject items in runtimeCreatedObjects)
+        try
         {
-            GiveVelocity(items);
+            foreach (GameObject items in runtimeCreatedObjects)
+            {
+                if (items != null)
+                {
+                    GiveVelocity(items);
+                }
+                else continue;
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            Debug.Log("Ну пусто и пусто");
         }
     }
 
     public float GetDelay()
     {
         float.TryParse(timeToSpawn.text, out float result);
-        //Debug.Log(result);
+        if(result<0)
+        {
+            timeToSpawn.text = "0";
+        }
         return result;
     }
 
     public float GetSpeed()
     {
         float.TryParse(speedForCubes.text, out float result);
-        //Debug.Log(result);
+        if(result<0)
+        {
+            timeToSpawn.text = "0";
+        }
         return result;
     }
 
     public float GetDistance()
     {
         float.TryParse(distanceForCubes.text, out float result);
-        //Debug.Log(result);
+        if(result<0)
+        {
+            timeToSpawn.text = "0";
+        }
         return result;
     }
 
@@ -70,13 +86,17 @@ public class Spawner : MonoBehaviour
         if (spawnControl.isOn)
         {
             gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, GiveDistance(), Time.deltaTime * GetSpeed());
+            if (gameObject.transform.position == GiveDistance())
+            {
+                runtimeCreatedObjects.Remove(gameObject);
+                Destroy(gameObject);
+            }
         }
-        //gameObject.GetComponent<Rigidbody>().AddForce(transform.forward*GetSpeed());
     }
 
     public Vector3 GiveDistance()
     {
-        Vector3 distance = new Vector3(0, 0.7f, GetDistance());
+        Vector3 distance = new Vector3(0, 0.5f, GetDistance());
         return distance;
     }
 
